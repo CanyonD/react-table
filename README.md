@@ -1,3 +1,21 @@
+https://github.com/react-bootstrap-table/react-bootstrap-table2
+
+https://react-bootstrap-table.github.io/react-bootstrap-table2/docs/getting-started.html
+https://react-bootstrap-table.github.io/react-bootstrap-table2/docs/basic-celledit.html
+https://react-bootstrap-table.github.io/react-bootstrap-table2/docs/column-props.html
+
+https://react-bootstrap-table.github.io/react-bootstrap-table2/docs/table-props.html
+https://react-bootstrap-table.github.io/react-bootstrap-table2/docs/table-props.html#ontablechange-function
+
+
+
+
+https://github.com/Jeasonweb/bootstraptablefixed/blob/master/index.html
+https://github.com/hanxue10180/bootstrapTable/blob/master/public/static/js/userManagement.js
+
+
+
+
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 
 Below you will find some information on how to perform common tasks.<br>
