@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css'; 
+// import 'bootstrap/dist/css/bootstrap-grid.min.css';
+// import 'bootstrap/dist/js/bootstrap.min.js';  
 import BootstrapTable from 'react-bootstrap-table-next';
 import cellEditFactory from 'react-bootstrap-table2-editor';
 import paginationFactory from "react-bootstrap-table2-paginator";
@@ -64,6 +66,28 @@ class StringWithProp extends React.Component {
   }
 }
 
+function trClassFormat(rowData, rIndex) {
+  if (rowData.price > 2102 && rowData.price < 2106)
+    return "bg-danger";
+  return "";
+}
+
+function rankFormatter(cell, row, rowIndex, formatExtraData) {
+  if (cell)
+    return (
+      <i key='fas' 
+        className="mx-2 text-danger fas fa-question-circle" 
+        title={cell}></i>
+    )
+
+  return '';
+}
+
+function indication() {
+  return 'Table is Empty';
+}
+
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -79,10 +103,7 @@ class App extends Component {
           align: 'center',
           headerAlign: 'center',
           dataField: "name",
-          text: "Product Name",
-          editorRenderer: (editorProps, value) => (
-            <StringWithProp { ...editorProps } value={ value } />
-          )
+          text: "Product Name"
         },
         {
           align: 'center',
@@ -90,20 +111,33 @@ class App extends Component {
           dataField: "price",
           sort: true,
           headerSortingStyle: {backgroundColor: 'lightblue'},
-          text: "Product Price",
-          editorRenderer: (editorProps, value) => (
-            <QualityRanger { ...editorProps } value={ value } />
-          )
+          text: "Product Price"
+        },
+        {
+          align: 'center',
+          headerAlign: 'center',
+          dataField: "info",
+          text: "Info",
+          editable: false,
+          formatter: rankFormatter,
+          style: (cell, row, rowIndex, colIndex) => {
+            if (cell) {
+              return {backgroundColor: 'pink'};
+            }
+            return {};
+          }
         }
+
       ]
     };
 
     this.addProduct = this.addProduct.bind(this);
   }
 
+  
   addProduct(quantity) {
     let { products } = this.state;
-    const startId = products.length;
+    const startId = 1; //products.length;
 
     for (let i = 0; i < quantity; i++) {
       const id = startId + i;
@@ -118,12 +152,11 @@ class App extends Component {
 
   componentDidMount() {
     let { products } = this.state;
-    this.addProduct(12);
-
     products.push({
       id: 1,
       name: 'product 1',
-      price: 11.1
+      price: 11.1,
+      info: 'Error in value'
     });
     products.push({
       id: 2,
@@ -131,6 +164,7 @@ class App extends Component {
       price: 11.2
     });
 
+    this.addProduct(25);
     this.setState({ products: products });
   }
 
@@ -138,31 +172,57 @@ class App extends Component {
     console.log(arguments)
   }
 
+  cellEdit () { 
+    return cellEditFactory({
+        mode: 'click',
+        errorMessage: 'Error'
+    });
+  }
+
   render() {
     const { products, columns } = this.state;
 
     return (
-      <div className="container">
         <BootstrapTable 
-          striped
           hover
-          condensed
+          condensed ={true}
           maxHeight={15}
           keyField="id"
-          bootstrap4={true}  
-          cellEdit={ cellEditFactory({ mode: 'click' }) }
-          pagination={paginationFactory()}
+          bootstrap4={true}
+          noDataIndication={ indication }  
+          cellEdit={ this.cellEdit() }
+          pagination={paginationFactory({
+            hidePageListOnlyOnePage: true,
+            withFirstAndLast: true,
+            showTotal: true,
+            paginationTotalRenderer: (from, to, size) => (
+              <span className="mx-3 react-bootstrap-table-pagination-total">
+                Показано { from } по { to + 1 } из { size }
+              </span>
+            ),
+            sizePerPage: 3,
+            sizePerPageList: [
+              {
+                text: '5th', value: 5
+              }, {
+                text: '10th', value: 10
+              }, {
+                text: 'All', value: products.length?products.length:1
+              } 
+            ],
+            firstPageTitle: 'Первая',
+            prePageTitle: 'Предыдущая',
+            nextPageTitle: 'Следующая',
+            lastPageTitle: 'Последняя'
+          })}
           onTableChange={this.onTableChange}
           remote={ {
-              filter: false,
-              pagination: false,
-              sort: false,
               cellEdit: true
             } }
           data={ products } 
           columns={ columns }
+          rowClasses={trClassFormat}
         />
-      </div>
     );
   }
 }
