@@ -67,16 +67,16 @@ class StringWithProp extends React.Component {
 }
 
 function trClassFormat(rowData, rIndex) {
-  if (rowData.price > 2102 && rowData.price < 2106)
+  if (rowData.error_message)
     return "bg-danger";
   return "";
 }
 
-function rankFormatter(cell, row, rowIndex, formatExtraData) {
+function errorFormatter(cell, row, rowIndex, formatExtraData) {
   if (cell)
     return (
       <i key={'fas'+rowIndex}
-        className="mx-2 text-danger fas fa-question-circle" 
+        className="mx-2 fas fa-question-circle" 
         title={cell}>
       </i>
     )
@@ -96,34 +96,52 @@ class App extends Component {
       products: [],
       columns: [
         {
-          hidden: true,
+          // hidden: true,
+          align: 'center',
+          headerAlign: 'center',
           dataField: "id",
-          text: "Product ID"
+          text: "ID",
+          text: "№",
         },
         {
           align: 'center',
           headerAlign: 'center',
-          dataField: "name",
-          text: "Product Name"
-        },
-        {
-          align: 'center',
-          headerAlign: 'center',
-          dataField: "price",
+          dataField: "index_name",
+          text: "Показатель",
           sort: true,
-          headerSortingStyle: {backgroundColor: 'lightblue'},
-          text: "Product Price"
         },
         {
           align: 'center',
           headerAlign: 'center',
-          dataField: "info",
-          text: "Info",
+          dataField: "code_name",
+          text: "КОАТУУ",
+          sort: true,
+        },
+        {
+          hidden: true,
+          align: 'center',
+          headerAlign: 'center',
+          dataField: "object_name",
+          text: "Наименование объекта",
+          sort: true,
+        },
+        {
+          align: 'center',
+          headerAlign: 'center',
+          dataField: "data_value",
+          text: "Данные",
+          sort: true,
+        },
+        {
+          align: 'center',
+          headerAlign: 'center',
+          dataField: "error_message",
+          text: "",
           editable: false,
-          formatter: rankFormatter,
+          formatter: errorFormatter,
           style: (cell, row, rowIndex, colIndex) => {
             if (cell) {
-              return {backgroundColor: 'pink'};
+              return {color: 'yellow'};
             }
             return {};
           }
@@ -132,41 +150,48 @@ class App extends Component {
       ]
     };
 
-    this.addProduct = this.addProduct.bind(this);
-  }
-
-  
-  addProduct(quantity) {
-    let { products } = this.state;
-    const startId = 1; //products.length;
-
-    for (let i = 0; i < quantity; i++) {
-      const id = startId + i;
-      products.push({
-        id: id,
-        name: "Item name " + id,
-        price: 2100 + i
-      });
-    }
-    this.setState({ products: products });
   }
 
   componentDidMount() {
     let { products } = this.state;
     products.push({
       id: 1,
-      name: 'product 1',
-      price: 11.1,
-      info: 'Error in value'
+      code_name: 'Бориспільський',
+      index_name: 'Індекс фінансової спроможності',
+      data_value: '#DEL',
+      error_id: 1,
+      error_message: 'Не корректные данные'
     });
     products.push({
       id: 2,
-      name: 'product 2',
-      price: 11.2,
-      info: 'Error in value'
+      code_name: 'Обухівський',
+      index_name: 'Індекс фінансової спроможності',
+      data_value: 13.23,
+      error_message: null
+    });
+    products.push({
+      id: 3,
+      code_name: 'Миронівський',
+      index_name: 'Індекс фінансової спроможності',
+      data_value: 17.23,
+      error_message: null
+    });
+    products.push({
+      id: 4,
+      code_name: 'Володарський',
+      index_name: 'Індекс фінансової спроможності',
+      data_value: 17.23,
+      error_message: null
+    });
+    products.push({
+      id: 5,
+      code_name: null,
+      index_name: 'Індекс фінансової спроможності',
+      data_value: 11.93,
+      error_id: 2,
+      error_message: 'Не верное указанный КОАТУУ'
     });
 
-    this.addProduct(25);
     this.setState({ products: products });
   }
 
