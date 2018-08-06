@@ -4,7 +4,6 @@ import BootstrapTable from 'react-bootstrap-table-next';
 import cellEditFactory from 'react-bootstrap-table2-editor';
 import paginationFactory from "react-bootstrap-table2-paginator";
 import PropTypes from 'prop-types'
-
 class QualityRanger extends React.Component {
   static propTypes = {
     value: PropTypes.number,
@@ -28,6 +27,9 @@ class QualityRanger extends React.Component {
         max="100"
         onChange={ () => onUpdate(this.getValue()) }
       />,
+      <i key='fas' 
+        className="mx-2 text-success fas fa-question-circle" 
+        title='sdf'></i>
     ];
   }
 }
@@ -51,15 +53,13 @@ class StringWithProp extends React.Component {
         key="string"
         ref={ node => this.range = node }
         type="string"
-        title={'sdfsdf'}
         min="0"
         max="100"
         onChange={ () => onUpdate(this.getValue()) }
       />,
-      <button type="button" class="btn btn-secondary" data-toggle="tooltip" data-html="true" title="<em>Tooltip</em> <u>with</u> <b>HTML</b>">
-        Tooltip with HTML
-      </button>,
-      <span key='badge' className="badge badge-danger">?</span>
+      <i key='fas' 
+        className="mx-2 text-danger fas fa-question-circle" 
+        title='sdf'></i>
     ];
   }
 }
@@ -85,6 +85,8 @@ class App extends Component {
           )
         },
         {
+          align: 'center',
+          headerAlign: 'center',
           dataField: "price",
           sort: true,
           headerSortingStyle: {backgroundColor: 'lightblue'},
