@@ -75,9 +75,10 @@ function trClassFormat(rowData, rIndex) {
 function rankFormatter(cell, row, rowIndex, formatExtraData) {
   if (cell)
     return (
-      <i key='fas' 
+      <i key={'fas'+rowIndex}
         className="mx-2 text-danger fas fa-question-circle" 
-        title={cell}></i>
+        title={cell}>
+      </i>
     )
 
   return '';
@@ -161,7 +162,8 @@ class App extends Component {
     products.push({
       id: 2,
       name: 'product 2',
-      price: 11.2
+      price: 11.2,
+      info: 'Error in value'
     });
 
     this.addProduct(25);
@@ -197,17 +199,19 @@ class App extends Component {
             showTotal: true,
             paginationTotalRenderer: (from, to, size) => (
               <span className="mx-3 react-bootstrap-table-pagination-total">
-                Показано { from } по { to + 1 } из { size }
+                Показано с { from } по { to + 1 } из { size } записей
               </span>
             ),
-            sizePerPage: 3,
+            sizePerPage: 10,
             sizePerPageList: [
               {
-                text: '5th', value: 5
+                text: '5', value: 5
               }, {
-                text: '10th', value: 10
+                text: '10', value: 10
               }, {
-                text: 'All', value: products.length?products.length:1
+                text: '20', value: 20
+              }, {
+                text: 'Все', value: products.length?products.length:1
               } 
             ],
             firstPageTitle: 'Первая',
