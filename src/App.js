@@ -1,10 +1,27 @@
 import React, { Component } from 'react';
+// import jQuery from 'jquery';
+// import 'jquery/dist/jquery.min.js';
+
 import 'bootstrap/dist/css/bootstrap.min.css'; 
+import 'bootstrap/dist/js/bootstrap.min.js'; 
+
+import 'popper.js/dist/popper.min.js'; 
+import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
+import 'react-bootstrap-table-next/dist/react-bootstrap-table-next.min.js';
+import 'react-bootstrap-table2-filter/dist/react-bootstrap-table2-filter.min.css';
+import 'react-bootstrap-table2-filter/dist/react-bootstrap-table2-filter.min.js';
+import 'react-bootstrap-table2-editor/dist/react-bootstrap-table2-editor.min.js';
+
+
+// import 'react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.js';
+
 // import 'bootstrap/dist/css/bootstrap-grid.min.css';
 // import 'bootstrap/dist/js/bootstrap.min.js';  
 import BootstrapTable from 'react-bootstrap-table-next';
-import cellEditFactory from 'react-bootstrap-table2-editor';
+import cellEditFactory, { Type } from 'react-bootstrap-table2-editor';
+import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 import paginationFactory from "react-bootstrap-table2-paginator";
+import overlayFactory from 'react-bootstrap-table2-overlay';
 import PropTypes from 'prop-types'
 class QualityRanger extends React.Component {
   static propTypes = {
@@ -30,36 +47,6 @@ class QualityRanger extends React.Component {
         onChange={ () => onUpdate(this.getValue()) }
       />,
       <i key='fas' 
-        className="mx-2 text-success fas fa-question-circle" 
-        title='sdf'></i>
-    ];
-  }
-}
-
-class StringWithProp extends React.Component {
-  static propTypes = {
-    value: PropTypes.string,
-    onUpdate: PropTypes.func.isRequired
-  }
-  static defaultProps = {
-    value: 0
-  }
-  getValue() {
-    return parseInt(this.range.value, 10);
-  }
-  render() {
-    const { value, onUpdate, ...rest } = this.props;
-    return [
-      <input
-        { ...rest }
-        key="string"
-        ref={ node => this.range = node }
-        type="string"
-        min="0"
-        max="100"
-        onChange={ () => onUpdate(this.getValue()) }
-      />,
-      <i key='fas' 
         className="mx-2 text-danger fas fa-question-circle" 
         title='sdf'></i>
     ];
@@ -68,7 +55,7 @@ class StringWithProp extends React.Component {
 
 function trClassFormat(rowData, rIndex) {
   if (rowData.error_message)
-    return "bg-danger";
+    return "bg-warning";
   return "";
 }
 
@@ -76,7 +63,7 @@ function errorFormatter(cell, row, rowIndex, formatExtraData) {
   if (cell)
     return (
       <i key={'fas'+rowIndex}
-        className="mx-2 fas fa-question-circle" 
+        className="mx-2 text-danger fas fa-question-circle" 
         title={cell}>
       </i>
     )
@@ -85,9 +72,8 @@ function errorFormatter(cell, row, rowIndex, formatExtraData) {
 }
 
 function indication() {
-  return 'Table is Empty';
+  return 'Нет записей или поиск не дал результатов';
 }
-
 
 class App extends Component {
   constructor(props) {
@@ -98,10 +84,12 @@ class App extends Component {
         {
           // hidden: true,
           align: 'center',
-          headerAlign: 'center',
           dataField: "id",
-          text: "ID",
           text: "№",
+          headerStyle: {
+            width: '8%',
+            textAlign: 'center'
+          },
         },
         {
           align: 'center',
@@ -109,6 +97,7 @@ class App extends Component {
           dataField: "index_name",
           text: "Показатель",
           sort: true,
+          filter: textFilter(),
         },
         {
           align: 'center',
@@ -116,6 +105,32 @@ class App extends Component {
           dataField: "code_name",
           text: "КОАТУУ",
           sort: true,
+          editor: {
+            type: Type.SELECT,
+            options: [{
+              value: 'Бориспільський',
+              label: 'Бориспільський'
+            }, {
+              value: 'Обухівський',
+              label: 'Обухівський'
+            }, {
+              value: 'Миронівський',
+              label: 'Миронівський'
+            }, {
+              value: 'Володарський',
+              label: 'Володарський'
+            }]
+        },
+          validator: (newValue, row, column) => {
+            if (newValue) {
+              return {
+                valid: false,
+                message: 'Район не указан'
+              };
+            }
+            return true;
+          },
+          filter: textFilter(),
         },
         {
           hidden: true,
@@ -124,6 +139,7 @@ class App extends Component {
           dataField: "object_name",
           text: "Наименование объекта",
           sort: true,
+          filter: textFilter(),
         },
         {
           align: 'center',
@@ -131,14 +147,17 @@ class App extends Component {
           dataField: "data_value",
           text: "Данные",
           sort: true,
+          filter: textFilter(),
         },
         {
           align: 'center',
-          headerAlign: 'center',
           dataField: "error_message",
           text: "",
           editable: false,
           formatter: errorFormatter,
+          headerStyle: {
+            width: '8%',
+          },
           style: (cell, row, rowIndex, colIndex) => {
             if (cell) {
               return {color: 'yellow'};
@@ -146,7 +165,6 @@ class App extends Component {
             return {};
           }
         }
-
       ]
     };
 
@@ -199,10 +217,11 @@ class App extends Component {
     console.log(arguments)
   }
 
-  cellEdit () { 
+  cellEdit (props) { 
     return cellEditFactory({
         mode: 'click',
-        errorMessage: 'Error'
+        blurToSave: true,
+        // errorMessage: 'Error Message'
     });
   }
 
@@ -212,10 +231,10 @@ class App extends Component {
     return (
         <BootstrapTable 
           hover
-          condensed ={true}
+          condensed ={ true }
           maxHeight={15}
           keyField="id"
-          bootstrap4={true}
+          bootstrap4={ true }
           noDataIndication={ indication }  
           cellEdit={ this.cellEdit() }
           pagination={paginationFactory({
@@ -246,11 +265,17 @@ class App extends Component {
           })}
           onTableChange={this.onTableChange}
           remote={ {
-              cellEdit: true
+              cellEdit: false//true
             } }
           data={ products } 
           columns={ columns }
           rowClasses={trClassFormat}
+          defaultSorted={ [{
+            dataField: 'id',
+            order: 'asc'
+          }] }
+          filter={ filterFactory() }
+          overlay={ overlayFactory({ spinner: true, background: 'rgba(192,192,192,0.3)' }) }
         />
     );
   }
